@@ -1,6 +1,14 @@
 const express = require('express');
+const mariadb = require('mariadb');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const pool = mariadb.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: '1234',
+    database: 'pokemondata'
+});
 
 app.use(express.json());
 app.use(function(req, res, next) {
@@ -9,10 +17,32 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.post('/store-data', (req, res) => {
+pool.getConnection()
+    .then(conn => {
+    console.log("Connected!");
+    // Use the connection to insert data into a table
+    // conn.query("INSERT INTO my_table (column1, column2) VALUES (?, ?)", ["value1", "value2"])
+    //     .then(result => {
+    //     console.log(result);
+    //     conn.end();
+    //     })
+    //     .catch(error => {
+    //     console.log(error);
+    //     conn.end();
+    //     });
+    // })
+    // .catch(error => {
+    // console.log("Failed to connect!");
+    // console.log(error);
+    }
+);
+
+
+app.post('/store-data', async (req, res) => {
     const data = req.body;
     console.log("received /store-data", JSON.stringify(data));
     const response = { message: 'Data received!', status: 'success' };
+    insertData(data);
     res.json(response);
 });
 
