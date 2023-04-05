@@ -13,30 +13,31 @@ const pool = mariadb.createPool({
 app.use(express.json());
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");    
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
-pool.getConnection()
-    .then(conn => {
-    console.log("Connected!");
-    // Use the connection to insert data into a table
-    // conn.query("INSERT INTO my_table (column1, column2) VALUES (?, ?)", ["value1", "value2"])
-    //     .then(result => {
-    //     console.log(result);
-    //     conn.end();
-    //     })
-    //     .catch(error => {
-    //     console.log(error);
-    //     conn.end();
-    //     });
-    // })
-    // .catch(error => {
-    // console.log("Failed to connect!");
-    // console.log(error);
-    }
-);
-
+function insertData(data){
+    pool.getConnection()
+        .then(conn => {
+        console.log("Connected!");
+        // Use the connection to insert data into a table
+        conn.query("INSERT INTO pokemones (id, datos) VALUES (?, ?)", [3, data])
+            .then(result => {
+                console.log(result);
+                conn.end();
+            })
+            .catch(error => {
+                console.log(error);
+                conn.end();
+            });
+        })
+        .catch(error => {
+            console.log("Failed to connect!");
+            console.log(error);
+        }
+    );
+}
 
 app.post('/store-data', async (req, res) => {
     const data = req.body;
